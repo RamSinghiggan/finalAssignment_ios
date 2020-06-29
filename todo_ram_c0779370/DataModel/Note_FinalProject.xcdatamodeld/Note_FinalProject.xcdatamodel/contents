@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19C57" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Archieved" representedClassName="Archieved" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="notes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Notes" inverseName="arch" inverseEntity="Notes"/>
+    </entity>
+    <entity name="Folder" representedClassName="Folder" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="notesss" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Notes" inverseName="folder" inverseEntity="Notes"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="name"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="Notes" representedClassName="Notes" syncable="YES" codeGenerationType="class">
+        <attribute name="created" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="date" optional="YES" attributeType="String"/>
+        <attribute name="desc" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="arch" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Archieved" inverseName="notes" inverseEntity="Archieved"/>
+        <relationship name="folder" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Folder" inverseName="notesss" inverseEntity="Folder"/>
+    </entity>
+    <elements>
+        <element name="Folder" positionX="188.23828125" positionY="365.04296875" width="128" height="73"/>
+        <element name="Notes" positionX="-171" positionY="225" width="128" height="133"/>
+        <element name="Archieved" positionX="209.97265625" positionY="233.78515625" width="128" height="73"/>
+    </elements>
+</model>
