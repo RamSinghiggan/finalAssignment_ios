@@ -1,10 +1,4 @@
-//
-//  NoteTableViewController.swift
-//  Note_FinalProject
-//
-//  Created by ram singh iggan on 2020-06-21.
-//  Copyright © 2020 Geetanjali. All rights reserved.
-//
+
 
 import UIKit
 import CoreData
@@ -242,7 +236,22 @@ class NoteTableViewController: UITableViewController,UISearchResultsUpdating,UIS
                let alert = UIAlertController(title: "Move to Archieved", message: "Are you sure?", preferredStyle: .alert)
                let yesAction = UIAlertAction(title: "Move", style: .default) { (action) in
                 
-            //    self.notes[indexPath.row] =
+         
+                let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+                let request: NSFetchRequest<Archieved> = Archieved.fetchRequest()
+              //  let folderPredicate = NSPredicate(format: "name MATCHES %@", "Archived")
+             //   request.predicate = folderPredicate
+                do {
+                    var category = try context.fetch(request)
+                   // self.notes[indexPath.row].arch = category.append(self.notes[indexPath.row].arch )
+                    
+                    self.saveNotes()
+                   
+                    tableView.reloadData()
+                } catch {
+                    print("Error fetching data \(error.localizedDescription)")
+                }
+                
                    
                   
                }

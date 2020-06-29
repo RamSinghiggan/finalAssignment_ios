@@ -5,7 +5,7 @@ import CoreData
 class FolderViewController: UITableViewController {
     
        var folders = [Folder]()
-
+    var notificationArray = [Notes]()
        
     
     @IBOutlet weak var deleteBtn: UIBarButtonItem!
@@ -189,8 +189,69 @@ class FolderViewController: UITableViewController {
        }
     }
     
-    
+     func setUpNotifications() {
+            
+            checkDueTasks()
+            if notificationArray.count > 0 {
+                for task in notificationArray {
+                    
+                    if let name = task.title{
+                        let notificationCenter = UNUserNotificationCenter.current()
+                        let notificationContent = UNMutableNotificationContent()
+                        
+                        notificationContent.title = "Task Reminder"
+                        notificationContent.body = "This message is to remind that \(name) is due tommorow"
+                        notificationContent.sound = .default
+    //                    sets up notification for a day before the task
+                        
+                        let datecond = task.date!
+                                       let dateFormatter = DateFormatter()
+                                           dateFormatter.dateFormat = "dd/MM/yyyy"
+                                       let date4 = dateFormatter.date(from: datecond)
+                        
+                        
+                        let fromDate = Calendar.current.date(byAdding: .day, value: -1, to: date4!)!
+                        let components = Calendar.current.dateComponents([.month, .day, .year], from: fromDate)
+                        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+                        let request = UNNotificationRequest(identifier: "\(name)taskid", content: notificationContent, trigger: trigger)
+                        notificationCenter.add(request) { (error) in
+                            if error != nil {
+                                print(error ?? "notification center error")
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+        
+    //    fetches the list of due tasks
+        func checkDueTasks() {
+            
+            let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+            let request: NSFetchRequest<Notes> = Notes.fetchRequest()
+            do {
+                let notifications = try context.fetch(request)
+                
+                for task in notifications {
+                    let datecon = task.date!
+                    let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "dd/MM/yyyy"
+                    let date3 = dateFormatter.date(from: datecon)
+                    
+                    if Calendar.current.isDateInTomorrow(date3!) {
+                        notificationArray.append(task)
+                    }
+                }
+            } catch {
+                print("Error loading todos \(error.localizedDescription)")
+            }
+            
+        }
+        
+    }
+
     
 
-}
+
 
