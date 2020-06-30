@@ -54,21 +54,21 @@ class archieved: UITableViewController {
             return cell
         }
         
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            let alert = UIAlertController(title: "Move to \(archieve[indexPath.row].name!)", message: "Are you sure?", preferredStyle: .alert)
-            let yesAction = UIAlertAction(title: "Move", style: .default) { (action) in
-                for note in self.selectedNotes! {
-                   // note.arch = [Archieved]
-                }
-                self.performSegue(withIdentifier: "dismissMoveToVC", sender: self)
-            }
+//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//            let alert = UIAlertController(title: "Move to \(archieve[indexPath.row].name!)", message: "Are you sure?", preferredStyle: .alert)
+//            let yesAction = UIAlertAction(title: "Move", style: .default) { (action) in
+//                for note in self.selectedNotes! {
+//                   // note.arch = [Archieved]
+//                }
+//                self.performSegue(withIdentifier: "dismissMoveToVC", sender: self)
+//            }
             
-            let noAction = UIAlertAction(title: "No", style: .cancel, handler: nil)
-            noAction.setValue(UIColor.orange, forKey: "titleTextColor")
-            alert.addAction(yesAction)
-            alert.addAction(noAction)
-            present(alert, animated: true, completion: nil)
-        }
+//            let noAction = UIAlertAction(title: "No", style: .cancel, handler: nil)
+//            noAction.setValue(UIColor.orange, forKey: "titleTextColor")
+//            alert.addAction(yesAction)
+//            alert.addAction(noAction)
+//            present(alert, animated: true, completion: nil)
+//        }
     
     
     

@@ -14,9 +14,10 @@ class NoteTableViewController: UITableViewController,UISearchResultsUpdating,UIS
     var searchController = UISearchController()
     var resultsController = UITableViewController()
     let userNotificationCenter = UNUserNotificationCenter.current()
- 
+ var selectedTodo: Notes?
     var notebook : Folder!
-   
+    var tasksArray = [Notes]()
+    
     @IBOutlet weak var deletebtn: UIBarButtonItem!
     @IBOutlet weak var movebtn: UIBarButtonItem!
     
@@ -92,17 +93,24 @@ class NoteTableViewController: UITableViewController,UISearchResultsUpdating,UIS
     
     
     func sortByTitle() {
-        let fetchRequest:NSFetchRequest<Notes> = Notes.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        
-        do {
-            self.notes = try context.fetch(fetchRequest)
-        }
-        catch{
-            print(error)
-            dismiss(animated: true, completion: nil)
-        }
-        
+     func loadNotes(with request: NSFetchRequest<Notes> = Notes.fetchRequest(), predicate: NSPredicate? = nil) {
+        //        let request: NSFetchRequest<Note> = Note.fetchRequest()
+                let folderPredicate = NSPredicate(format: "folder.name=%@", selectedFolder!.name!)
+                request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+                if let addtionalPredicate = predicate {
+                    request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [folderPredicate, addtionalPredicate])
+                } else {
+                    request.predicate = folderPredicate
+                }
+                
+                do {
+                    notes = try context.fetch(request)
+                } catch {
+                    print("Error loading notes \(error.localizedDescription)")
+                }
+                
+                tableView.reloadData()
+            }
     }
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
@@ -230,27 +238,15 @@ class NoteTableViewController: UITableViewController,UISearchResultsUpdating,UIS
     override func tableView(_ tableView: UITableView,
                    leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration?
     {
+        
+          
         let closeAction = UIContextualAction(style: .normal, title:  "Archieve", handler: { (ac:UIContextualAction, view:UIView, success:(Bool) -> Void) in
-         
+        
 
                let alert = UIAlertController(title: "Move to Archieved", message: "Are you sure?", preferredStyle: .alert)
                let yesAction = UIAlertAction(title: "Move", style: .default) { (action) in
                 
-         
-                let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-                let request: NSFetchRequest<Archieved> = Archieved.fetchRequest()
-              //  let folderPredicate = NSPredicate(format: "name MATCHES %@", "Archived")
-             //   request.predicate = folderPredicate
-                do {
-                    var category = try context.fetch(request)
-                   // self.notes[indexPath.row].arch = category.append(self.notes[indexPath.row].arch )
-                    
-                    self.saveNotes()
-                   
-                    tableView.reloadData()
-                } catch {
-                    print("Error fetching data \(error.localizedDescription)")
-                }
+                self.archieved()
                 
                    
                   
@@ -328,7 +324,7 @@ class NoteTableViewController: UITableViewController,UISearchResultsUpdating,UIS
         func loadNotes(with request: NSFetchRequest<Notes> = Notes.fetchRequest(), predicate: NSPredicate? = nil) {
         //        let request: NSFetchRequest<Note> = Note.fetchRequest()
                 let folderPredicate = NSPredicate(format: "folder.name=%@", selectedFolder!.name!)
-                request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+                request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: false)]
                 if let addtionalPredicate = predicate {
                     request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [folderPredicate, addtionalPredicate])
                 } else {
@@ -348,16 +344,7 @@ class NoteTableViewController: UITableViewController,UISearchResultsUpdating,UIS
      func deleteNote(note: Notes) {
          context.delete(note)
      }
-    
-    func movearchieve(note: Notes){
-//        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-             
-                  //  note.arch = self.archieve[indexPath.row]
-                        //self.performSegue(withIdentifier: "dismissMoveToVC", sender: self)
-//                }
 
-            
-    }
         func saveNotes() {
             do {
                 try context.save()
@@ -390,6 +377,8 @@ class NoteTableViewController: UITableViewController,UISearchResultsUpdating,UIS
         }
     
     
+    
+    // Delete note Fn
     @IBAction func deleteNotes(_ sender: UIBarButtonItem) {
         
         if let indexPaths = tableView.indexPathsForSelectedRows {
@@ -411,7 +400,7 @@ class NoteTableViewController: UITableViewController,UISearchResultsUpdating,UIS
     
     
     
-    
+    //Seugue Controls
     
      
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
@@ -448,5 +437,33 @@ class NoteTableViewController: UITableViewController,UISearchResultsUpdating,UIS
               }
     }
 
+    
+    
+    // Archieved function
+    
+    
+    func archieved() {
+           
+                     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+                     let request: NSFetchRequest<Archieved> = Archieved.fetchRequest()
+                   //  let folderPredicate = NSPredicate(format: "name MATCHES %@", "Archived")
+                  //   request.predicate = folderPredicate
+                     do {
+                        let category = try context.fetch(request)
+                       
+                         
+                         self.selectedTodo?.arch = category.first
+                              
+                         self.tasksArray.removeAll { (Todo) -> Bool in
+                             Todo == self.selectedTodo!
+                                 }
+                        
+                         self.saveNotes()
+                        
+                         tableView.reloadData()
+                     } catch {
+                         print("Error fetching data \(error.localizedDescription)")
+                     }
+    }
 }
 

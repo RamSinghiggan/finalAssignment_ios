@@ -132,24 +132,6 @@ class AddNoteVC: UIViewController{
             alertBox.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { action in
                 self.navigationController?.popViewController(animated: true)
                 
-               // self.datecompare()
-//                let content = UNMutableNotificationContent()
-//                               content.categoryIdentifier = "Dataadded"
-//                               content.title = "Task added"
-//                               content.subtitle = "Some tasks got overdue from todo app"
-//                               content.body = " Notification triggered"
-//                               content.sound = UNNotificationSound.default
-//
-//                               let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-//
-//                                  let request = UNNotificationRequest(identifier: "Dataadded", content: content, trigger: trigger)
-//
-//                               let center = UNUserNotificationCenter.current()
-//                               center.add(request) { (error : Error?) in
-//                                   if let theError = error {
-//                                       print(theError.localizedDescription)
-//                                   }
-//                               }
             }))
             self.present(alertBox, animated: true, completion: nil)
         }
